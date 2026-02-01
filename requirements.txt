@@ -1,0 +1,13 @@
+# Core dependencies
+mysql-connector-python==8.2.0
+python-dotenv==1.0.0
+
+# LLM Provider SDKs
+anthropic==0.40.0
+openai==1.54.0
+google-generativeai==0.3.2
+
+# Optional: For Ollama (local LLM)
+requests==2.31.0
+
+# Utilities
