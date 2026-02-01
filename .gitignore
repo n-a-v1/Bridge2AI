@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-.vscode/
-
-# data files (do NOT commit sponsor data unless allowed)
-*.xlsx
-*.zip
-*.pbix
-datapack/
