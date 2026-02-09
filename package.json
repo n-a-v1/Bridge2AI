@@ -1,0 +1,36 @@
+{
+  "name": "js-llm-manager",
+  "version": "1.0.0",
+  "description": "JavaScript AI LLM Manager with MySQL persistence, multi-provider support, and AI bias analysis",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js chat",
+    "setup": "node scripts/setup-db.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage --forceExit",
+    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "wipe-keys": "node src/index.js wipe-keys",
+    "wipe-db": "node src/index.js wipe-db"
+  },
+  "keywords": ["ai", "llm", "chatbot", "mysql", "anthropic", "openai", "claude"],
+  "author": "Bridge2AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0",
+    "openai": "^4.20.0",
+    "@google/generative-ai": "^0.1.0",
+    "mysql2": "^3.6.5",
+    "dotenv": "^16.3.1",
+    "commander": "^11.1.0",
+    "chalk": "^5.3.0",
+    "xlsx": "^0.18.5",
+    "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "@jest/globals": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
