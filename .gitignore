@@ -3,3 +3,4 @@ coverage/
 bias-journal/
 .env
 *.log
+tree.txt
