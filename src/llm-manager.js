@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import chalk from 'chalk';
+import { renderScanBox, renderSQL, renderResultsTable } from './display.js';
 
 class LLMManager {
   constructor(db) { this.db = db; this.client = null; this.model = null; }
@@ -28,37 +29,40 @@ class LLMManager {
   async chat(msg, sid, user, ctx) {
     const profs = await this.db.getAllDataProfiles();
     const samples = await this._getSamples();
+
+    // Show real dataset stats before AI generates SQL
+    await renderScanBox(this.db, profs);
+
     const sysprompt = this._buildPrompt(profs, samples);
     const msgs = ctx ? ctx.slice(-6).map(m => ({role:m.role, content:m.content})) : [];
     await this.db.saveMessage(sid, user, 'user', msg, this.model);
-    
+
     try {
-      console.log(chalk.gray('💭 Thinking...'));
+      console.log(chalk.gray('💭 Generating SQL query...'));
       msgs.push({role:'user', content:msg});
       const res = await this.client.messages.create({model:this.model, max_tokens:4000, system:sysprompt, messages:msgs});
-      
+
       let txt = res.content[0].text;
       const sqlMatch = txt.match(/<SQL>([\s\S]*?)<\/SQL>/);
-      
+
       if (sqlMatch) {
         const sql = sqlMatch[1].trim();
-        console.log(chalk.blue('🔍 '+sql.substring(0,80)));
+        renderSQL(sql);
         try {
           const results = await this.db.executeQuery(sql);
-          console.log(chalk.green('✓ '+results.length+' results'));
-          
+          renderResultsTable(results);
           txt = txt.split('<SQL>')[0].trim();
           if (results.length > 0) {
-            txt += '\n\n🎯 '+results.length+' RESULTS:\n\n'+JSON.stringify(results.slice(0,20), null, 2);
+            txt += `\n\n✅ ${results.length} results returned above`;
           } else {
-            txt += '\n\n⚠️ 0 results';
+            txt += '\n\n⚠️  Query ran but returned 0 results';
           }
         } catch (e) {
-          console.log(chalk.red('✗ '+e.message));
-          txt = 'Error: '+e.message;
+          console.log(chalk.red('✗ SQL error: ' + e.message));
+          txt = 'SQL Error: ' + e.message;
         }
       }
-      
+
       await this.db.saveMessage(sid, user, 'assistant', txt, this.model);
       return txt;
     } catch (e) { return 'Error: '+e.message; }
