@@ -14,6 +14,8 @@ A Node.js CLI that:
 - Displays results in formatted tables with a real "scanning" phase showing live dataset stats
 
 ---
+![example1](github/example1.png)
+![example2](github/example2.png)
 
 ## Prerequisites
 
